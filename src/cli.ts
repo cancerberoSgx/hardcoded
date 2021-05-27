@@ -1,6 +1,8 @@
-import { getDefaultExclude, selectFiles } from './cli-util'
-import * as glob from 'glob';
-import { asArray, slash } from 'misc-utils-of-mine-generic';
+import { readFileSync } from 'fs';
+import { asArray } from 'misc-utils-of-mine-generic';
+import { getDefaultExclude, selectFiles } from './cli-util';
+import { main as libMain } from './index';
+import { colorMatchers } from './matchers/colors';
 
 interface Options {
   source: string
@@ -13,17 +15,37 @@ interface Result {
   output: string
   status: number
 }
-// example: 
-// npm run build; node bin/hardcoded.js --source . --exclude "**/cli*" --exclude="./node_modules/**"
 
 export async function main(options: Partial<Options>): Promise<Result> {
-  const { sourceGlob, globOptions, finalOptions } = extractOptions(options);
-  const files = await selectFiles(sourceGlob, globOptions)
-  
-  if(finalOptions.list) {
+  try {
+    const { sourceGlob, globOptions, finalOptions } = extractOptions(options);
+    const files = await selectFiles(sourceGlob, globOptions)
+    //TODO: options.include
+
+    if (finalOptions.list) {
+      return {
+        output: files.join('\n'),
+        status: 0
+      }
+    }
+    const results = files
+      .map(file => {
+        const input = readFileSync(file).toString()
+        // TODO configurable/user defined matchers
+        const matches = libMain({ input, matchers: colorMatchers }).filter(match => match.results.length)
+        return { file, matches }
+      })
+      .filter(result => result.matches.length)
     return {
-      output: files.join('\n'),
-      status: 0
+      status: 0,
+      output: results.map(r => `FILE ${r.file}, MATCHES: ${JSON.stringify(r.matches)}`).join('\n')
+    }
+
+  } catch (error) {
+    console.trace(error)
+    return {
+      status: 1,
+      output: `${error.toString()}\n  ${error.stack.join('\n  ')}`
     }
   }
 }
@@ -33,22 +55,18 @@ function extractOptions(options: Partial<Options>) {
   const defaultOptions: Options = {
     source: '.',
     exclude: defaultExclude,
-    include: [], 
+    include: [],
     list: false
   };
   const finalOptions = { ...defaultOptions, ...options };
   finalOptions.exclude = [...defaultOptions.exclude, ...asArray(finalOptions.exclude)];
 
-  // const sourceGlob = `${withFinalSlash(finalOptions.source)}**/*`;
   const sourceGlob = `**/*`;
-
-  // console.log({ sourceGlob }, finalOptions);
-
   const globOptions = {
     ignore: finalOptions.exclude,
     root: finalOptions.source,
     cwd: finalOptions.source,
-    nodir: true
+    nodir: true,
   };
   return { sourceGlob, globOptions, finalOptions };
 }

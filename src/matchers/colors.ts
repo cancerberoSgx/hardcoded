@@ -1,6 +1,6 @@
 import { Matcher } from "../match";
 
-export const matchers: Matcher[] = [
+export const colorMatchers: Matcher[] = [
   {
     name: 'hex',
     predicates: [

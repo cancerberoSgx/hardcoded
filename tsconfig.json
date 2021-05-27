@@ -9,5 +9,6 @@
   },
   "include": [
     "src", "spec"
-  ]
+  ],
+  "exclude": ["spec/assets/sample-project"]
 }
