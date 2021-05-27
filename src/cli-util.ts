@@ -13,8 +13,15 @@ export function selectFiles(pattern: string, globOptions = {}): Promise<string[]
   });
 }
 
-export function parseArguments(args?: string) {
-  const parsed = parseArgs(args || process.argv)
+export function parseArguments(args?: string[]) {
+  args = args || process.argv
+  const parsed = parseArgs(args)
+  const programIndex = args.findIndex(arg => arg.includes('hardcoded'))
+  const toolArg = args[programIndex+1]  
+  if(!toolArg.startsWith('--')) {
+    parsed.tool = toolArg
+  }
+  // console.log(toolArg);
   return parsed
 }
 

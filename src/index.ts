@@ -1,6 +1,7 @@
 import { MatchOptions, match } from "./match"
-import { colorMatchers } from "./matchers/colors"
+import { colorTool } from "./tools/colors"
 
 export function main(options: Partial<MatchOptions>&{input: string}) {
-  return match({matchers: colorMatchers, ...options})
+  options.matchers = options.matchers ||   colorTool.matchers
+  return match(options as MatchOptions)
 }

@@ -6,3 +6,5 @@
 /.npmignore
 /dist/spec
 /tsconfig.json
+/spec
+*.tgz
