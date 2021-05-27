@@ -1,7 +1,6 @@
 
 /** given a string it returns all matches (substrings) or empty array if no match */
 export type StringPredicate = ((s: string) => String[]) | RegExp;
-
 export interface MatchOptions {
   input: string;
   matchers: Matcher[];

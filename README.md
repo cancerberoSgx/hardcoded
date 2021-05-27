@@ -1,4 +1,4 @@
-An utility to find hardcoded CSS colors in any project.
+An utility to find hardcoded HTML/CSS colors in any project.
 
 Initial Motivation: make sure we always reference theme color variables. 
 
@@ -19,7 +19,7 @@ hardcoded --source ../target-project --include "**/*.scss" --include "**/*.tsx" 
 
  * --help
  * --format=md|json (default: md)
- * --source=folder/to/analyze
+ * --source=my/project (optional, defaults to current folder)
  * --exclude=GLOB
  * --include=GLOB
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-const { main, parseArguments } = require('../dist/src/cli')
+const { main } = require('../dist/src/cli')
+const { parseArguments } = require('../dist/src/cli-util')
 
 const options = parseArguments(process.argv)
-console.log(options);
+// console.log(options);
 main(options)

@@ -1,11 +1,12 @@
-import { Matcher } from "./match";
+import { Matcher } from "../match";
 
 export const matchers: Matcher[] = [
   {
     name: 'hex',
     predicates: [
-      // (s: string) => s.includes('#') ? ['true'] : [] //TODO
-      /(#[a-f0-9]+)/gi
+      /(#[a-f0-9]+)/gi, 
+      // /(#[a-f0-9]{6})/gi,
+      // /(#[a-f0-9]{8})/gi
     ]
   },
   {

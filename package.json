@@ -1,6 +1,6 @@
 {
   "name": "hardcoded",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An utility to find hardcoded CSS colors in any project. A library to write your own project text search utility",
   "main": "dist/src/index.js",
   "bin": {
@@ -12,7 +12,8 @@
     "test-all": "npm test && npm run clean && npm run build && npm run test-js",
     "build": "tsc",
     "clean": "rm -rf dist",
-    "all": "npm run test-all"
+    "all": "npm run test-all",
+    "test-cli": "npm run build; node bin/hardcoded.js"
   },
   "keywords": [
     "style guide",
@@ -25,7 +26,8 @@
   "license": "MIT",
   "dependencies": {
     "glob": "^7.1.7",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "misc-utils-of-mine-generic": "^0.2.37"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
