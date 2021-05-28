@@ -1,10 +1,11 @@
 import { readFileSync } from 'fs';
 import { asArray } from 'misc-utils-of-mine-generic';
+import { join } from 'path';
 import { getDefaultExclude, selectFiles } from './cli-util';
 import { main as libMain } from './index';
 import { MatchResult } from './match';
 import { colorTool } from './tools/colors';
-
+const { isBinaryFile } = require("isbinaryfile")
 interface Options {
   source: string
   list: boolean
@@ -13,6 +14,7 @@ interface Options {
   tool: string
   // groupBy: 'file'|'value'|'matcher'
   format: 'json' | 'plain' | 'md'
+  help: boolean
 }
 
 interface Result {
@@ -22,6 +24,13 @@ interface Result {
 
 export async function main(options: Partial<Options>): Promise<Result> {
   try {
+    const validation = validateOptions(options)
+    if(validation){
+      return {
+        output: validation,
+        status: 1
+      }
+    }
     const { sourceGlob, globOptions, finalOptions } = extractOptions(options);
     const files = await selectFiles(sourceGlob, globOptions)
     // TODO: options.include
@@ -32,14 +41,38 @@ export async function main(options: Partial<Options>): Promise<Result> {
         status: 0
       }
     }
+    if(finalOptions.help) {
+      return {
+        output: `
+Usage: hardcoded --source target/project --exclude "**/*.svg" --exclude "node_modules/**"
+
+Options:
+  --help                  (display help)
+  --format=plain|md|json  (default: plain)
+  --source=my/project     (optional, defaults to current folder)
+  --exclude=GLOB          (can be passed multiple times)
+  --list                  (just list matching files)
+
+        `.trim(), 
+        status: 0
+      }
+    }
     const tool = getTool(finalOptions)
-    const results = files
-      .map(file => {
-        const input = readFileSync(file).toString()
-        const matches = libMain({ input, matchers: tool.matchers }).filter(match => match.results.length)
-        return { file, matches }
-      })
-      .filter(result => result.matches.length)
+
+    // TODO: do this better, async queue? serial ? which has best times ? 
+    let results = await Promise.all(
+      files
+        .map(async file => {
+          const realFile = join(finalOptions.source, file)
+          if (await isBinaryFile(realFile)) {
+            return { file, matches: [] }
+          }
+          const input = readFileSync(realFile).toString()
+          const matches = libMain({ input, matchers: tool.matchers }).filter(match => match.results.length)
+          return { file, matches }
+        })
+    )
+    results = results.filter(result => result.matches.length)
     return {
       status: 0,
       output: format(results, finalOptions)
@@ -63,7 +96,7 @@ function format(results: FilesResult[], options: Partial<Options>): string {
   if (options.format === 'json') {
     return JSON.stringify(results)
   } else {
-    return results.map(r => `FILE ${r.file}, MATCHES: ${JSON.stringify(r.matches)}`).join('\n');
+    return results.map(r => `${r.file}: ${JSON.stringify(r.matches)}`).join('\n');
   }
 }
 
@@ -76,6 +109,7 @@ function extractOptions(options: Partial<Options>) {
     // include: [],
     list: false,
     format: 'plain',
+    help: false,
   };
   const finalOptions: Options = { ...defaultOptions, ...options };
   finalOptions.exclude = [...defaultOptions.exclude, ...asArray(finalOptions.exclude)];
@@ -103,3 +137,6 @@ function getTool(options: Options) {
   }
 }
 
+function validateOptions(options: Partial<Options>) {
+  return null
+}

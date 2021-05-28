@@ -12,7 +12,7 @@ It works for any language as long as they use CSS color syntax (like #ededed, rg
 npm i -g hardcoded
 cd my/source/project
 hardcoded
-hardcoded colors --source ../target-project --include "**/*.scss" --include "**/*.tsx" --exclude="**/*Test.*"
+hardcoded colors --source ../target-project --exclude="**/*Test.*" --exclude="node_modules/**"
 ```
 
 # Options
@@ -21,8 +21,9 @@ The first argument, `colors` is the name of the tool. See Tools section
 
  * --help
  * --format=plain|md|json (default: plain)
- * --source=my/project (optional, defaults to current folder)
- * --exclude=GLOB
+ * --source=my/project    (optional, defaults to current folder)
+ * --exclude=GLOB         (can be passed multiple times)
+ * --list                 (just list matching files)
  <!-- * --include=GLOB -->
  
 
@@ -46,8 +47,8 @@ you can easily reuse this as a library to write your own apps:
 
 # TODO
 
+ * cli: req args validation
  * exclude files in .gitignore by default  
- * exclude binary
  * async StringPredicate 
 
  * easy to build tools with a single .js implementation: 
@@ -69,3 +70,14 @@ hardcoded --custom custom-hardcoded.js --include foo --exclude bar --format json
   * npm i -g hardcoded hardcoded-cool; hardcoded cool .... 
   *  * tool setup. Example, parse the project with typescript, have a tool.initialize() that 
   *  * parses the project and a be able to connect matcher.predicates to the compiler
+
+# DONE 
+
+ * exclude binary
+
+# useful commands
+
+```
+npm run build && node bin/hardcoded.js --exclude "node_modules/**" --exclude "dist/**" --exclude="spec/**"
+ts-node -T bin/hardcoded.ts --exclude "node_modules/**" --exclude "dist/**" --exclude="spec/**"
+```

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const { main } = require('../dist/src/cli')
-const { parseArguments } = require('../dist/src/cli-util')
+import { main } from '../src/cli'
+import { parseArguments } from '../src/cli-util'
 
 async function hardcoded() {
-  const options = parseArguments(process.argv)
+  const options = parseArguments(process.argv) as any
   const results = await main(options)
   if (results.status !== 0) {
     console.error(results.output);
