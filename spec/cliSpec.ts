@@ -19,7 +19,7 @@ describe('main', () => {
   })
 
   it('ts cli', () => {
-    const cmd = 'ts-node bin/hardcoded.ts --source spec/assets/sample-project --exclude "node_modules/**" --exclude "dist/**" --exclude="spec/**" --format json'
+    const cmd = 'npx ts-node bin/hardcoded.ts --source spec/assets/sample-project --exclude "node_modules/**" --exclude "dist/**" --exclude="spec/**" --format json'
     const r = exec(cmd, { silent: true })
 
     expect(r.code).toBe(0)
@@ -28,6 +28,18 @@ describe('main', () => {
     expect(parsed.map(p => p.file).sort()).toEqual(['src/a.css', 'src/a.ts', 'src/a.tsx'])
     const matches = parsed.map(p => p.matches.map(m=>m.results).flat()).flat()
     expectToContain(matches, [ '#ededed', 'rgb(12, 34, 56)', '#aa4411', '#44aa99'])
+  })
+
+  it('async-test', () => {
+    const cmd = 'npx ts-node bin/hardcoded.ts --tool async-test --source spec/assets/sample-project --exclude "node_modules/**" --exclude "dist/**" --exclude="spec/**" --format json'
+    const r = exec(cmd, { silent: true })
+
+    expect(r.code).toBe(0)
+    const parsed = JSON.parse(r.stdout)
+
+    expect(parsed.map(p => p.file).sort()).toEqual(['src/a.tsx'])
+    const matches = parsed.map(p => p.matches.map(m=>m.results).flat()).flat()
+    expectToContain(matches, [ 'async-test'])
   })
 
 })

@@ -1,6 +1,6 @@
 
 /** given a string it returns all matches (substrings) or empty array if no match */
-export type StringPredicate = ((s: string) => String[]) | RegExp 
+export type StringPredicate = ((s: string) => Promise<String[]>) | RegExp
 
 export interface Matcher {
   name: string
@@ -11,12 +11,14 @@ export interface MatchOptions {
   matchers: Matcher[]
 }
 
-export type MatchResult = { name: string, results: string[]}
-export function match(options: MatchOptions): MatchResult[] {
-  return options.matchers.map(matcher => ({
-    name: matcher.name,
-    results: matcher.predicates.map(predicate => callPredicate(predicate, options.input)).flat()
-  }))
+export type MatchResult = { name: string, results: string[] }
+export async function match(options: MatchOptions): Promise<MatchResult[]> {
+  return await Promise.all(
+    options.matchers.map(async matcher => ({
+      name: matcher.name,
+      results: (await Promise.all(matcher.predicates.map(predicate => callPredicate(predicate, options.input)))).flat()
+    }))
+  )
 }
 
 /**
@@ -30,15 +32,15 @@ export interface MatchTool {
   matchers: Matcher[]
 }
 
-function callPredicate(predicate: StringPredicate, s: string) {
+async function callPredicate(predicate: StringPredicate, s: string) {
   if (predicate instanceof RegExp) {
     let results = [], r
-    while((r = predicate.exec(s))) {
+    while ((r = predicate.exec(s))) {
       results = [...results, r[0]]
     }
     return results
   }
   else {
-    return predicate(s)
+    return await predicate(s)
   }
 }

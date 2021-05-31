@@ -24,9 +24,10 @@ The first argument, `colors` is the name of the tool. See Tools section
  * --source=my/project    (optional, defaults to current folder)
  * --exclude=GLOB         (can be passed multiple times)
  * --list                 (just list matching files)
- <!-- * --include=GLOB -->
+ * --noGitIgnore          (if given it will not exclude .gitignore globs)
+ * --includeBinary        (if given binary files will be included)
+ * --tool                 (The default tool is colors - others will be added)
  
-
 # Tools
 
 The default tool is `colors` which will find CSS colors which is the default. Others will be added. 
@@ -47,8 +48,6 @@ you can easily reuse this as a library to write your own apps:
 
 # TODO
 
- * cli: req args validation
- * exclude files in .gitignore by default  
  * async StringPredicate 
 
  * easy to build tools with a single .js implementation: 
@@ -74,6 +73,8 @@ hardcoded --custom custom-hardcoded.js --include foo --exclude bar --format json
 # DONE 
 
  * exclude binary
+ * exclude files in .gitignore by default  
+ * cli: req args validation
 
 # useful commands
 
