@@ -1,3 +1,5 @@
+import { Options } from "./cli"
+import { colorTool } from "./tools/colors"
 
 /** given a string it returns all matches (substrings) or empty array if no match */
 export type StringPredicate = ((s: string) => Promise<String[]>) | RegExp
@@ -21,6 +23,11 @@ export async function match(options: MatchOptions): Promise<MatchResult[]> {
   )
 }
 
+export function mainMatch(options: Partial<MatchOptions>&{input: string}) {
+  options.matchers = options.matchers || colorTool.matchers
+  return match(options as MatchOptions)
+}
+
 /**
  * Represent a tool, this is a string matching utility. 
  * The default one is tools/colors.ts that basically match css colors with regex
@@ -29,6 +36,10 @@ export async function match(options: MatchOptions): Promise<MatchResult[]> {
 export interface MatchTool {
   name: string
   description?: string
+  /** A chance to initialize the tool, for example, compile the TS project first */
+  initialize?(options: Options): Promise<void>
+  /** If true files won't be read and the file path will be passed to matchers instead of content */
+  dontReadFiles?: boolean
   matchers: Matcher[]
 }
 

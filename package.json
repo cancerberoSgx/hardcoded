@@ -28,7 +28,8 @@
     "glob": "^7.1.7",
     "isbinaryfile": "^4.0.8",
     "minimist": "^1.2.5",
-    "misc-utils-of-mine-generic": "^0.2.37"
+    "misc-utils-of-mine-generic": "^0.2.37",
+    "ts-morph": "^11.0.0"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",

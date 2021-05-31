@@ -2,10 +2,10 @@ import { readFileSync } from 'fs';
 import { asArray } from 'misc-utils-of-mine-generic';
 import { join } from 'path';
 import { getDefaultExclude, selectFiles } from './cli-util';
-import { main as libMain } from './index';
-import { MatchResult } from './match';
+import { MatchResult, mainMatch } from './match';
 import { asyncTestMatcher } from './tools/async-test';
 import { colorTool } from './tools/colors';
+import { jsxStrings } from './tools/jsx-strings';
 const { isBinaryFile } = require("isbinaryfile")
 
 export interface Options {
@@ -13,7 +13,6 @@ export interface Options {
   list: boolean
   exclude: string[]
   tool: string
-  // groupBy: 'file'|'value'|'matcher'
   format: 'json' | 'plain'
   help: boolean
   noGitIgnore: boolean
@@ -24,6 +23,7 @@ interface Result {
   output: string
   status: number
 }
+
 
 export async function main(options: Partial<Options>): Promise<Result> {
   try {
@@ -60,6 +60,9 @@ Options:
       }
     }
     const tool = getTool(finalOptions)
+    if(tool.initialize) {
+      await tool.initialize(finalOptions);
+    }
 
     // TODO: do this better, async queue? serial ? which has best times ? 
     let results = await Promise.all(
@@ -69,8 +72,8 @@ Options:
           if (!options.includeBinary && await isBinaryFile(realFile)) {
             return { file, matches: [] }
           }
-          const input = readFileSync(realFile).toString()
-          const matches = (await libMain({ input, matchers: tool.matchers })).filter(match => match.results.length)
+          const input = tool.dontReadFiles ? realFile : readFileSync(realFile).toString()
+          const matches = (await mainMatch({ input, matchers: tool.matchers })).filter(match => match.results.length)
           return { file, matches }
         })
     )
@@ -84,7 +87,7 @@ Options:
     console.trace(error)
     return {
       status: 1,
-      output: `${error.toString()}\n  ${error.stack.join('\n  ')}`
+      output: `${error.toString()}`
     }
   }
 }
@@ -134,6 +137,9 @@ function getTool(options: Options) {
   }
   if (options.tool === 'async-test') {
     return asyncTestMatcher
+  }
+  if(options.tool === 'jsx-strings') {
+    return jsxStrings
   }
   // TODO dynamic tools 
   else {

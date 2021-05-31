@@ -42,6 +42,18 @@ describe('main', () => {
     expectToContain(matches, [ 'async-test'])
   })
 
+  it('jsx-strings', () => {
+    const cmd = 'npx ts-node bin/hardcoded.ts --tool jsx-strings --source spec/assets/sample-project --exclude "node_modules/**" --exclude "dist/**" --exclude="spec/**" --format json'
+    const r = exec(cmd, { silent: true })
+
+    expect(r.code).toBe(0)
+    const parsed = JSON.parse(r.stdout)
+
+    expect(parsed.map(p => p.file).sort()).toEqual(['src/a.tsx', 'src/b.js'])
+    const matches = parsed.map(p => p.matches.map(m=>m.results).flat()).flat()
+    expectToContain(matches, [ 'Hello world', 'hello world 1'])
+  })
+
 })
 
 function expectToContain(actual: string[], expected: string[]) {

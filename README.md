@@ -26,16 +26,21 @@ The first argument, `colors` is the name of the tool. See Tools section
  * --list                 (just list matching files)
  * --noGitIgnore          (if given it will not exclude .gitignore globs)
  * --includeBinary        (if given binary files will be included)
- * --tool                 (The default tool is colors - others will be added)
- 
+ * --tool                 (The default tool is colors - see Tools section)
+
 # Tools
 
-The default tool is `colors` which will find CSS colors which is the default. Others will be added. 
+##  --tool colors
 
-Also the project can be used to create custom tools. npm i -g hardcoded hardcoded-cool; hardcoded cool .... 
+The default tool. It searches for hardcoded CSS colors like `#ededed` or `rgb(1,2,3)`.
 
-THIS IS WIP - right now only colors (default)
+It's useful when you want to make sure all colors are referenced from theme variables.
 
+##  --tool jsx-strings
+
+It will find hardcoded text in JSX elements.
+
+Useful when you want to make sure there are no hardcoded strings in an internationalized project.
 
 # API
 
@@ -48,8 +53,8 @@ you can easily reuse this as a library to write your own apps:
 
 # TODO
 
- * async StringPredicate 
-
+ * groupBy match
+ * API
  * easy to build tools with a single .js implementation: 
 ```
 custom-hardcoded.js
@@ -75,7 +80,8 @@ hardcoded --custom custom-hardcoded.js --include foo --exclude bar --format json
  * exclude binary
  * exclude files in .gitignore by default  
  * cli: req args validation
-
+ * async StringPredicate 
+ * jsx text matcher
 # useful commands
 
 ```
