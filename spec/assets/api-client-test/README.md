@@ -6,11 +6,6 @@ Also, a library to create your own project text-matching utility.
 
 It works for any language as long as they use CSS color syntax (like #ededed, rgb(1,2,3), etc)
 
-
-<!-- toc -->
-
-<!-- tocstop -->
-
 # Command line
 
 ```
@@ -49,10 +44,6 @@ Useful when you want to make sure there are no hardcoded strings in an internati
 
 # API
 
-```sh 
-npm install hardcoded
-```
-
 See [test.ts](spec/assets/api-client-test/src/test.ts).
 
 ## Customize
@@ -62,7 +53,3 @@ TODO / WIP
 The idea is that you are able to enhance this library with plugins easily. If you solve another use case, being able to share a .js matcher file or (ideally) create your own hardcoded-my-cool-thing package.
 
 Currently this is WIL and not possible, but the matching logic is isolated, see [tools folder](src/tools).
-
-# TODO / Ideas / Changelog / Other
-
-[TODO.md](TODO.md)

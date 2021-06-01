@@ -13,10 +13,12 @@ export interface Options {
   list: boolean
   exclude: string[]
   tool: string
-  format: 'json' | 'plain'
+  /** `object` applies when calling main() from JS code */
+  format: 'json' | 'plain' | 'object'
   help: boolean
   noGitIgnore: boolean
   includeBinary: boolean
+  _throwError: boolean
 }
 
 interface Result {
@@ -24,8 +26,20 @@ interface Result {
   status: number
 }
 
+// interface ResultObject extends Result {
+//   error?: string
+//   result: FilesResult[]
+// }
 
-export async function main(options: Partial<Options>): Promise<Result> {
+export async function main(options: Partial<Options>): Promise<FilesResult[]> {
+  const r = await mainCli({...options, format: 'object', _throwError: true})
+  if(r.status!==0) {
+    throw new Error(r.output)
+  }
+  return r.output as any
+}
+
+export async function mainCli(options: Partial<Options>): Promise<Result> {
   try {
     const validation = validateOptions(options)
     if (validation) {
@@ -84,10 +98,14 @@ Options:
     }
 
   } catch (error) {
-    console.trace(error)
-    return {
-      status: 1,
-      output: `${error.toString()}`
+    // console.trace(error)
+    if(options._throwError) {
+      throw error
+    } else {
+      return {
+        status: 1,
+        output: `${error.toString()}`
+      }
     }
   }
 }
@@ -100,6 +118,9 @@ interface FilesResult {
 function format(results: FilesResult[], options: Partial<Options>): string {
   if (options.format === 'json') {
     return JSON.stringify(results)
+  }
+  else if (options.format === 'object') {
+    return results as any
   } else {
     return results.map(r => `${r.file}: ${JSON.stringify(r.matches)}`).join('\n')
   }
@@ -117,6 +138,7 @@ function extractOptions(options: Partial<Options>) {
     help: false,
     noGitIgnore: false,
     includeBinary: false,
+    _throwError: false
   }
   const finalOptions: Options = { ...defaultOptions, ...options }
   finalOptions.exclude = [...defaultOptions.exclude, ...asArray(finalOptions.exclude)]

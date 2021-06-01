@@ -1,0 +1,11 @@
+{
+  "name": "hardcoded-api-client-test",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {},
+  "author": "Sebastián Gurin",
+  "license": "MIT",
+  "dependencies": {
+    "hardcoded": "file:../../.."
+  }
+}

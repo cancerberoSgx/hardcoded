@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { main } from '../src/cli'
+import { mainCli } from '../src/cli'
 import { parseArguments } from '../src/cli-util'
 
 async function hardcoded() {
   const options = parseArguments(process.argv) as any
-  const results = await main(options)
+  const results = await mainCli(options)
   if (results.status !== 0) {
     console.error(results.output);
   } else {

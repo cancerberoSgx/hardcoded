@@ -1,17 +1,18 @@
 import { execSync } from 'child_process';
-import { main } from '../src/cli';
+import { mainCli } from '../src/cli';
 import { exec } from 'shelljs'
+import { expectToContain } from './testUtil';
 
 describe('main', () => {
 
   it('list', async () => {
-    let results = await main({ source: './spec/assets/sample-project', list: true })
+    let results = await mainCli({ source: './spec/assets/sample-project', list: true })
     expect(results.output).toContain('node_modules/package1/package1.txt')
     expect(results.output).toContain('src/a.css')
     expect(results.output).toContain('src/a.ts')
     expect(results.status).toBe(0)
 
-    results = await main({ source: './spec/assets/sample-project', list: true, exclude: ['node_modules/**'] })
+    results = await mainCli({ source: './spec/assets/sample-project', list: true, exclude: ['node_modules/**'] })
     expect(results.output).not.toContain('node_modules/package1/package1.txt')
     expect(results.output).toContain('src/a.css')
     expect(results.output).toContain('src/a.ts')
@@ -56,10 +57,4 @@ describe('main', () => {
 
 })
 
-function expectToContain(actual: string[], expected: string[]) {
-  expected.forEach(e=>{
-    if(!actual.includes(e)) {
-      fail(`${JSON.stringify(actual)} to contain ${e}`)
-    }
-  })
-}
+
