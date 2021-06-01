@@ -1,6 +1,6 @@
 {
   "name": "hardcoded",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An utility to find hardcoded CSS colors in any project. A library to write your own project text search utility",
   "main": "dist/src/index.js",
   "bin": {
