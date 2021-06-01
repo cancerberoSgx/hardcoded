@@ -14,7 +14,8 @@
     "prepare": "npm run clean && npm run build && npm run docs",
     "clean": "rm -rf dist *.tgz",
     "docs": "npx markdown-toc README.md -i",
-    "all": "rm -rf node_modules package-lock.json; npm i && npm run prepare && npm test"
+    "all": "rm -rf node_modules package-lock.json; npm i && npm run prepare && npm test",
+    "all-publish": "npm run all && git commit -a -m 'version patch' && npm version patch && npm publish"
   },
   "keywords": [
     "style guide",
