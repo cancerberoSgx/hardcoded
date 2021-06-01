@@ -7,11 +7,13 @@ import { asyncTestMatcher } from './tools/async-test';
 import { colorTool } from './tools/colors';
 import { jsxStrings } from './tools/jsx-strings';
 const { isBinaryFile } = require("isbinaryfile")
+import {match} from 'minimatch'
 
 export interface Options {
   source: string
   list: boolean
   exclude: string[]
+  include: string[]
   tool: string
   /** `object` applies when calling main() from JS code */
   format: 'json' | 'plain' | 'object'
@@ -20,6 +22,10 @@ export interface Options {
   includeBinary: boolean
   _throwError: boolean
 }
+
+// function included(file: string, includes: string[]) {
+//   match()
+// }
 
 interface Result {
   output: string
@@ -49,8 +55,12 @@ export async function mainCli(options: Partial<Options>): Promise<Result> {
       }
     }
     const { sourceGlob, globOptions, finalOptions } = extractOptions(options);
-    const files = await selectFiles(sourceGlob, globOptions)
-
+    let files = await selectFiles(sourceGlob, globOptions)
+    
+    finalOptions.include.forEach(include=>{
+      files = match(files, include)
+    })
+    
     if (finalOptions.list) {
       return {
         output: files.join('\n'),
@@ -133,6 +143,7 @@ function extractOptions(options: Partial<Options>) {
     source: '.',
     tool: colorTool.name,
     exclude: defaultExclude,
+    include: [],
     list: false,
     format: 'plain',
     help: false,
@@ -142,6 +153,7 @@ function extractOptions(options: Partial<Options>) {
   }
   const finalOptions: Options = { ...defaultOptions, ...options }
   finalOptions.exclude = [...defaultOptions.exclude, ...asArray(finalOptions.exclude)]
+  finalOptions.include = [...defaultOptions.include, ...asArray(finalOptions.include)]
 
   const sourceGlob = `**/*`
   const globOptions = {

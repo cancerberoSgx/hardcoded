@@ -1,5 +1,6 @@
 # TODO
 
+ * options.include
  * groupBy match
  * API
  * easy to build tools with a single .js implementation (like src/tools) and invoke : hardcoded --custom custom-hardcoded.js --include foo --exclude bar --format json 

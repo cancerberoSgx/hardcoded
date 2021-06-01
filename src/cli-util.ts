@@ -20,12 +20,6 @@ export function selectFiles(pattern: string, globOptions = {}): Promise<string[]
 export function parseArguments(args?: string[]) {
   args = args || process.argv
   const parsed = parseArgs(args)
-  // const programIndex = args.findIndex(arg => arg.includes('hardcoded'))
-  // const toolArg = args[programIndex + 1]
-  // if (toolArg && !toolArg.startsWith('--')) {
-  //   parsed.tool = toolArg
-  // }
-  // console.log(args, programIndex, toolArg);
   return parsed
 }
 

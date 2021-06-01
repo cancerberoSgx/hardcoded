@@ -5,17 +5,27 @@ import { expectToContain } from './testUtil';
 describe('main', () => {
 
   it('list', async () => {
-    let results = await mainCli({ source: './spec/assets/sample-project', list: true })
+    const results = await mainCli({ source: './spec/assets/sample-project', list: true })
+    expect(results.status).toBe(0)
     expect(results.output).toContain('node_modules/package1/package1.txt')
     expect(results.output).toContain('src/a.css')
     expect(results.output).toContain('src/a.ts')
-    expect(results.status).toBe(0)
+  })
 
-    results = await mainCli({ source: './spec/assets/sample-project', list: true, exclude: ['node_modules/**'] })
+  it('list-exclude', async () => {
+    const results = await mainCli({ source: './spec/assets/sample-project', list: true, exclude: ['node_modules/**'] })
+    expect(results.status).toBe(0)
     expect(results.output).not.toContain('node_modules/package1/package1.txt')
     expect(results.output).toContain('src/a.css')
     expect(results.output).toContain('src/a.ts')
+  })
+
+  it('list-exclude-include', async () => {
+    const results = await mainCli({ source: './spec/assets/sample-project', list: true, exclude: ['node_modules/**'], include: ['**/*.css'] })
     expect(results.status).toBe(0)
+    expect(results.output).not.toContain('node_modules/package1/package1.txt')
+    expect(results.output).not.toContain('src/a.ts')
+    expect(results.output).toContain('src/a.css')
   })
 
   it('ts cli', () => {

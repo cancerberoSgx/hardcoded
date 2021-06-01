@@ -25,40 +25,38 @@ Welcome to `hardcoded`, an utility and framework that implements this kind of us
 # install it globally
 npm i -g hardcoded
 
+# prints all hardcoded colors found in current project
 cd my/source/project
-
-# prints all hardcoded colors found in your project
 hardcoded
 
-# prints all hardcoded JSX strings in given project folder excluding some files
-hardcoded --tool jsx-strings --source target/project --exclude "spec/**" --exclude="node_modules/**"
+# prints all hardcoded JSX strings in given project folder excluding some files as json output
+hardcoded --tool jsx-strings --source target/project --format json --exclude "spec/**" --exclude="node_modules/**" --include="**/*.tsx"
 
 # just list files that will be included
-hardcoded --list --source target/project --exclude "spec/**" --exclude="node_modules/**"
+hardcoded --list --exclude="node_modules/**"
 ```
 
 # Options
 
-The first argument, `colors` is the name of the tool. See Tools section
-
  * --help
- * --format=plain|md|json (default: plain)
- * --source=my/project    (optional, defaults to current folder)
- * --exclude=GLOB         (can be passed multiple times)
- * --list                 (just list matching files)
- * --noGitIgnore          (if given it will not exclude .gitignore globs)
- * --includeBinary        (if given binary files will be included)
- * --tool                 (The default tool is colors - see Tools section)
+ * --format=plain|json|object   (default: plain)
+ * --source=my/project          (optional, defaults to current folder)
+ * --exclude=GLOB               (can be passed multiple times)
+ * --include=GLOB               (can be passed multiple times)
+ * --list                       (just list matching files)
+ * --noGitIgnore                (if given it will not exclude .gitignore globs)
+ * --includeBinary              (if given binary files will be included)
+ * --tool                       (The default tool is colors - see Tools section)
 
-# Tools
+## Tools
 
-##  --tool colors
+### --tool colors
 
 The default tool. It searches for hardcoded CSS colors like `#ededed` or `rgb(1,2,3)`.
 
 It's useful when you want to make sure all colors are referenced from theme variables.
 
-##  --tool jsx-strings
+###  --tool jsx-strings
 
 It will find hardcoded text in JSX elements.
 
