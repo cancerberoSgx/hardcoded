@@ -10,9 +10,9 @@ Welcome to `hardcoded`, an utility and framework that implements this kind of us
 
 - [Command line](#command-line)
 - [Options](#options)
-- [Tools](#tools)
-  * [--tool colors](#--tool-colors)
-  * [--tool jsx-strings](#--tool-jsx-strings)
+  * [Tools](#tools)
+    + [--tool colors](#--tool-colors)
+    + [--tool jsx-strings](#--tool-jsx-strings)
 - [API](#api)
   * [Customize](#customize)
 - [TODO / Ideas / Changelog / Other](#todo--ideas--changelog--other)
