@@ -1,23 +1,40 @@
-An utility to find hardcoded HTML/CSS colors in any project.
+Do you need to find all hardcoded colors to make sure you respect the theme variables across your project ?
 
-Initial Motivation: make sure we always reference theme color variables. 
+Do you need to find all hardcoded strings in JSX elements to make sure everything is internationalized ?
 
-Also, a library to create your own project text-matching utility.
+Do you want to easily create a powerful new matching tool for your own hardcoded strings use case easily ?
 
-It works for any language as long as they use CSS color syntax (like #ededed, rgb(1,2,3), etc)
-
+Welcome to `hardcoded`, an utility and framework that implements this kind of use cases and allows you to easily implement your own.
 
 <!-- toc -->
+
+- [Command line](#command-line)
+- [Options](#options)
+- [Tools](#tools)
+  * [--tool colors](#--tool-colors)
+  * [--tool jsx-strings](#--tool-jsx-strings)
+- [API](#api)
+  * [Customize](#customize)
+- [TODO / Ideas / Changelog / Other](#todo--ideas--changelog--other)
 
 <!-- tocstop -->
 
 # Command line
 
 ```
+# install it globally
 npm i -g hardcoded
+
 cd my/source/project
+
+# prints all hardcoded colors found in your project
 hardcoded
-hardcoded colors --source ../target-project --exclude="**/*Test.*" --exclude="node_modules/**"
+
+# prints all hardcoded JSX strings in given project folder excluding some files
+hardcoded --tool jsx-strings --source target/project --exclude "spec/**" --exclude="node_modules/**"
+
+# just list files that will be included
+hardcoded --list --source target/project --exclude "spec/**" --exclude="node_modules/**"
 ```
 
 # Options

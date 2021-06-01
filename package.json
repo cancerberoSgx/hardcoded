@@ -1,6 +1,6 @@
 {
   "name": "hardcoded",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "An utility to find hardcoded CSS colors in any project. A library to write your own project text search utility",
   "main": "dist/src/index.js",
   "bin": {
@@ -12,16 +12,18 @@
     "test": "npm run test-ts && npm run clean && npm run build && npm run test-js",
     "build": "npm run clean; tsc",
     "prepare": "npm run clean && npm run build && npm run docs",
-    "clean": "rm -rf dist",
-    "all": "npm run test-all",
-    "docs": "npx markdown-toc README.md -i"
+    "clean": "rm -rf dist *.tgz",
+    "docs": "npx markdown-toc README.md -i",
+    "all": "rm -rf node_modules package-lock.json; npm i && npm test"
   },
   "keywords": [
     "style guide",
     "css",
     "colors",
     "hardcoded",
-    "theme"
+    "theme",
+    "internationalization",
+    "intl"
   ],
   "author": "Sebastián Gurin",
   "license": "MIT",

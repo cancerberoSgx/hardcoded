@@ -8,7 +8,6 @@
     * tool setup. Example, parse the project with typescript, have a tool.initialize() that 
     * parses the project and a be able to connect matcher.predicates to the compiler
 
-
 # DONE / Changelog
 
  * exclude binary
@@ -16,7 +15,6 @@
  * cli: req args validation
  * async StringPredicate 
  * jsx text matcher
-
 
 # useful commands
 
