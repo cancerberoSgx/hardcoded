@@ -1,13 +1,13 @@
 import { readFileSync } from 'fs';
+import { match } from 'minimatch';
 import { asArray } from 'misc-utils-of-mine-generic';
 import { join } from 'path';
 import { getDefaultExclude, selectFiles } from './cli-util';
-import { MatchResult, mainMatch } from './match';
+import { mainMatch, MatchResult } from './match';
 import { asyncTestMatcher } from './tools/async-test';
 import { colorTool } from './tools/colors';
 import { jsxStrings } from './tools/jsx-strings';
 const { isBinaryFile } = require("isbinaryfile")
-import {match} from 'minimatch'
 
 export interface Options {
   source: string
@@ -20,26 +20,19 @@ export interface Options {
   help: boolean
   noGitIgnore: boolean
   includeBinary: boolean
+  /** if given it list available tools */
+  tools: boolean
   _throwError: boolean
 }
-
-// function included(file: string, includes: string[]) {
-//   match()
-// }
 
 interface Result {
   output: string
   status: number
 }
 
-// interface ResultObject extends Result {
-//   error?: string
-//   result: FilesResult[]
-// }
-
 export async function main(options: Partial<Options>): Promise<FilesResult[]> {
-  const r = await mainCli({...options, format: 'object', _throwError: true})
-  if(r.status!==0) {
+  const r = await mainCli({ ...options, format: 'object', _throwError: true })
+  if (r.status !== 0) {
     throw new Error(r.output)
   }
   return r.output as any
@@ -56,35 +49,17 @@ export async function mainCli(options: Partial<Options>): Promise<Result> {
     }
     const { sourceGlob, globOptions, finalOptions } = extractOptions(options);
     let files = await selectFiles(sourceGlob, globOptions)
-    
-    finalOptions.include.forEach(include=>{
+
+    finalOptions.include.forEach(include => {
       files = match(files, include)
     })
-    
-    if (finalOptions.list) {
-      return {
-        output: files.join('\n'),
-        status: 0
-      }
+    const listOptions = dispatchListOptions({ ...finalOptions, files });
+    if(listOptions) {
+      return listOptions
     }
-    if (finalOptions.help) {
-      return {
-        output: `
-Usage: hardcoded --source target/project --exclude "**/*.svg" --exclude "node_modules/**"
 
-Options:
-  --help                  (display help)
-  --format=plain|json     (default: plain)
-  --source=my/project     (optional, defaults to current folder)
-  --exclude=GLOB          (can be passed multiple times)
-  --list                  (just list matching files)
-  --noGitIgnore           (if given it will not exclude .gitignore globs)
-        `.trim(),
-        status: 0
-      }
-    }
     const tool = getTool(finalOptions)
-    if(tool.initialize) {
+    if (tool.initialize) {
       await tool.initialize(finalOptions);
     }
 
@@ -109,7 +84,7 @@ Options:
 
   } catch (error) {
     // console.trace(error)
-    if(options._throwError) {
+    if (options._throwError) {
       throw error
     } else {
       return {
@@ -138,7 +113,6 @@ function format(results: FilesResult[], options: Partial<Options>): string {
 
 function extractOptions(options: Partial<Options>) {
   const defaultExclude = getDefaultExclude(options)
-
   const defaultOptions: Options = {
     source: '.',
     tool: colorTool.name,
@@ -149,6 +123,7 @@ function extractOptions(options: Partial<Options>) {
     help: false,
     noGitIgnore: false,
     includeBinary: false,
+    tools: false,
     _throwError: false
   }
   const finalOptions: Options = { ...defaultOptions, ...options }
@@ -172,7 +147,7 @@ function getTool(options: Options) {
   if (options.tool === 'async-test') {
     return asyncTestMatcher
   }
-  if(options.tool === 'jsx-strings') {
+  if (options.tool === 'jsx-strings') {
     return jsxStrings
   }
   // TODO dynamic tools 
@@ -184,3 +159,41 @@ function getTool(options: Options) {
 function validateOptions(options: Partial<Options>) {
   return null
 }
+function dispatchListOptions(finalOptions: Options & { files: string[] }) {
+  if (finalOptions.list) {
+    return {
+      output: finalOptions.files.join('\n'),
+      status: 0
+    }
+  }
+  if (finalOptions.help) {
+    return {
+      output: `
+Usage: hardcoded --source target/project --exclude "**/*.svg" --exclude "node_modules/**""
+
+* --tool                       (The default tool is colors - see Tools section)
+* --format=plain|json|object   (default: plain)
+* --source=my/project          (optional, defaults to current folder)
+* --exclude=GLOB               (can be passed multiple times)
+* --include=GLOB               (can be passed multiple times)
+* --list                       (just list matching files)
+* --noGitIgnore                (if given it will not exclude .gitignore globs)
+* --includeBinary              (if given binary files will be included)
+* --tools                      (if given prints available tools)
+* --help
+
+--include and --exclude can be given multiple times and are globs like **/*.css, src/frontend/**
+      `.trim(),
+      status: 0
+    }
+  }
+  if (finalOptions.tools) {
+    // TODO: extensible
+    const tools = [colorTool, jsxStrings]
+    return {
+      output: JSON.stringify(tools.map(t => t.name)),
+      status: 0
+    }
+  }
+}
+

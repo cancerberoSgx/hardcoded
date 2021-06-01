@@ -58,6 +58,12 @@ describe('main', () => {
     expectToContain(matches, ['Hello world', 'hello world 1'])
   })
 
+  it('tools', () => {
+    const cmd = 'npx ts-node bin/hardcoded.ts --tools'
+    const r = exec(cmd, { silent: false })
+    expect(r.code).toBe(0)
+    const parsed = JSON.parse(r.stdout)
+    expectToContain(parsed, ['colors', 'jsx-strings'])
+  })
+
 })
-
-

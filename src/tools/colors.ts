@@ -1,7 +1,7 @@
 import { MatchTool } from "../match";
 
 export const colorTool: MatchTool = {
-  name: 'CSS colors',
+  name: 'colors',
   description: 'Search CSS colors like #ededed or rgb(1,2,3)',
   matchers: [
     {
