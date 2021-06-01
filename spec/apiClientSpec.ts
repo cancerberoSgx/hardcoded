@@ -9,16 +9,15 @@ describe('api client', () => {
       'cd spec/assets/api-client-test',
       'rm -rf node_modules',
       'npm i ../../..',
-    ].join(' && '))
+    ].join(' && '), { silent: true })
     expect(r.code).toBe(0)
+
     r = exec([
       'cd spec/assets/api-client-test',
       'ts-node src/test.ts',
     ].join(' && '), { silent: true })
     expect(r.code).toBe(0)
-
     expectToContain(r.stdout.split('\n'), [
-      // 'Status: 0',
       'File: src/a.css',
       'File: src/a.ts',
       'File: src/a.tsx',
